@@ -1,0 +1,12 @@
+{
+  "app": "./mvnw compile exec:java -pl cdk",
+  "context": {
+    "aws-cdk:enableDiffNoFail": "true",
+    "@aws-cdk/core:stackRelativeExports": "true"
+  },
+  "watch": {
+    "include": [
+      "./webpage/**"
+    ]
+  }
+}
