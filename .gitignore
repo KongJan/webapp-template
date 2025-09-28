@@ -37,3 +37,6 @@ cdk.out/
 
 # Gradle
 /.gradle/
+
+# Webpage
+/webpage/index.html
