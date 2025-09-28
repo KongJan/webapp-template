@@ -1,0 +1,10 @@
+plugins {
+    alias(libs.plugins.java)
+}
+
+dependencies {
+    implementation(libs.com.amazonaws.aws.lambda.java.events)
+    implementation(libs.software.amazon.awssdk.dynamodb)
+    implementation(libs.software.amazon.awssdk.url.connection.client)
+    implementation(libs.io.symphonia.lambda.logging)
+}
