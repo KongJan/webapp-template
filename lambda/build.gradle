@@ -2,9 +2,24 @@ plugins {
     alias(libs.plugins.java)
 }
 
+repositories {
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 dependencies {
     implementation(libs.com.amazonaws.aws.lambda.java.events)
     implementation(libs.software.amazon.awssdk.dynamodb)
     implementation(libs.software.amazon.awssdk.url.connection.client)
     implementation(libs.io.symphonia.lambda.logging)
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.junit)
+    testImplementation(libs.assertj.core)
 }

@@ -7,6 +7,9 @@ io-symphonia-lambda-logging = "1.0.3"
 software-amazon-awscdk-aws-cdk-lib = "2.190.0"
 software-amazon-awssdk-dynamodb = "2.13.66"
 software-amazon-awssdk-url-connection-client = "2.13.66"
+mockito = "5.12.0" # use the latest stable version
+junit = "5.10.2" # or latest version
+assertj = "3.26.3" # use the latest stable version
 
 [libraries]
 com-amazonaws-aws-lambda-java-events = { module = "com.amazonaws:aws-lambda-java-events", version.ref = "com-amazonaws-aws-lambda-java-events" }
@@ -15,6 +18,11 @@ software-amazon-awscdk-aws-cdk-lib = { module = "software.amazon.awscdk:aws-cdk-
 software-amazon-awssdk-dynamodb = { module = "software.amazon.awssdk:dynamodb", version.ref = "software-amazon-awssdk-dynamodb" }
 software-amazon-awssdk-url-connection-client = { module = "software.amazon.awssdk:url-connection-client", version.ref = "software-amazon-awssdk-url-connection-client" }
 commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version = { strictly = "[3.8, 4.0[", prefer="3.9" } }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 
 [plugins]
 java = { id = "java", version = "" }
