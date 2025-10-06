@@ -107,7 +107,7 @@ public class TheSimpleWebserviceStack extends Stack {
 
   private Function createLambda(String tableName) {
     return Function.Builder.create(this, "cdk-playground-lambda")
-        .code(Code.fromAsset("./lambda/target/lambda.zip"))
+        .code(Code.fromAsset("./lambda/target/lambda.jar"))
         .handler("com.cdkpatterns.LambdaHandler::handleRequest")
         .runtime(Runtime.JAVA_21)
         .architecture(Architecture.ARM_64)
