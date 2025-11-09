@@ -30,6 +30,7 @@ import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
 import software.amazon.awscdk.services.route53.ARecord;
+import software.amazon.awscdk.services.route53.AaaaRecord;
 import software.amazon.awscdk.services.route53.HostedZone;
 import software.amazon.awscdk.services.route53.HostedZoneProviderProps;
 import software.amazon.awscdk.services.route53.IHostedZone;
@@ -70,7 +71,13 @@ public class TheSimpleWebserviceStack extends Stack {
 
     ARecord.Builder.create(this, "AliasRecord")
         .zone(hostedZone)
-        .recordName("www")
+        .recordName(domainName)
+        .target(RecordTarget.fromAlias(new CloudFrontTarget(distribution)))
+        .build();
+
+    AaaaRecord.Builder.create(this, "AliasRecordAAAA")
+        .zone(hostedZone)
+        .recordName(domainName)
         .target(RecordTarget.fromAlias(new CloudFrontTarget(distribution)))
         .build();
 
