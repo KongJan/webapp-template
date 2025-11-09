@@ -33,7 +33,7 @@ cdk.out/
 /lambda/target/
 /cdk/target/
 /deploy.sh
-/build/
+**/build/*
 
 # Gradle
 /.gradle/

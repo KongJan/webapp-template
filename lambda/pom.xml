@@ -64,44 +64,20 @@
     </dependencies>
 
     <build>
+        <finalName>lambda</finalName>
         <plugins>
-            <!-- ZIP Packaging -->
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.plugin}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>io.symphonia</groupId>
-                        <artifactId>lambda-packaging</artifactId>
-                        <version>${symphonia.packaging.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.2</version>
                 <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptorRefs>
-                        <descriptorRef>lambda-zip</descriptorRef>
-                    </descriptorRefs>
-                    <finalName>lambda</finalName>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>io.github.zlika</groupId>
-                <artifactId>reproducible-build-maven-plugin</artifactId>
-                <version>${reproducible.build.maven.plugin}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>strip-jar</goal>
+                            <goal>shade</goal>
                         </goals>
                     </execution>
                 </executions>
