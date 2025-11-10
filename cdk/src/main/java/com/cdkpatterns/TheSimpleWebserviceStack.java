@@ -1,5 +1,6 @@
 package com.cdkpatterns;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ public class TheSimpleWebserviceStack extends Stack {
     ICertificate certificate = Certificate.fromCertificateArn(this, "SiteCert", certificateArn);
 
     Distribution distribution = createCloudfrontDistribution(s3Bucket, certificate, domainName);
-    HttpApi api = createHttpApi(lambda, distribution);
+    HttpApi api = createHttpApi(lambda, distribution, domainName);
 
     // 4. Route53 alias record
     IHostedZone hostedZone = HostedZone.fromLookup(
@@ -127,7 +128,7 @@ public class TheSimpleWebserviceStack extends Stack {
         .build();
   }
 
-  private HttpApi createHttpApi(Function dynamoLambda, Distribution distribution) {
+  private HttpApi createHttpApi(Function dynamoLambda, Distribution distribution, String domainName) {
     return HttpApi.Builder.create(this, "cdk-playground-api")
         .defaultIntegration(
             HttpLambdaIntegration.Builder
@@ -135,7 +136,7 @@ public class TheSimpleWebserviceStack extends Stack {
                 .build())
         .corsPreflight(CorsPreflightOptions.builder()
             .allowMethods(Collections.singletonList(CorsHttpMethod.GET))
-            .allowOrigins(Collections.singletonList("https://" + distribution.getDistributionDomainName()))
+            .allowOrigins(Arrays.asList("https://" + distribution.getDistributionDomainName(), "https://" + domainName))
             .build())
         .build();
   }
