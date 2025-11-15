@@ -32,7 +32,6 @@ cdk.out/
 # Build folders
 /lambda/target/
 /cdk/target/
-/deploy.sh
 **/build/*
 
 # Gradle
@@ -40,3 +39,6 @@ cdk.out/
 
 # Webpage
 /webpage/index.html
+
+# Environment variables
+/.env
