@@ -33,7 +33,6 @@ cdk.context.json
 # Build folders
 /lambda/target/
 /cdk/target/
-/deploy.sh
 **/build/*
 
 # Gradle
@@ -41,3 +40,6 @@ cdk.context.json
 
 # Webpage
 /webpage/index.html
+
+# Environment variables
+/.env
