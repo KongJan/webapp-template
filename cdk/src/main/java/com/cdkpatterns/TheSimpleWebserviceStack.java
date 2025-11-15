@@ -1,5 +1,6 @@
 package com.cdkpatterns;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,8 @@ import software.amazon.awscdk.aws_apigatewayv2_integrations.HttpLambdaIntegratio
 import software.amazon.awscdk.services.apigatewayv2.CorsHttpMethod;
 import software.amazon.awscdk.services.apigatewayv2.CorsPreflightOptions;
 import software.amazon.awscdk.services.apigatewayv2.HttpApi;
+import software.amazon.awscdk.services.certificatemanager.Certificate;
+import software.amazon.awscdk.services.certificatemanager.ICertificate;
 import software.amazon.awscdk.services.cloudfront.BehaviorOptions;
 import software.amazon.awscdk.services.cloudfront.Distribution;
 import software.amazon.awscdk.services.cloudfront.PriceClass;
@@ -27,6 +30,13 @@ import software.amazon.awscdk.services.lambda.Architecture;
 import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.lambda.Function;
 import software.amazon.awscdk.services.lambda.Runtime;
+import software.amazon.awscdk.services.route53.ARecord;
+import software.amazon.awscdk.services.route53.AaaaRecord;
+import software.amazon.awscdk.services.route53.HostedZone;
+import software.amazon.awscdk.services.route53.HostedZoneProviderProps;
+import software.amazon.awscdk.services.route53.IHostedZone;
+import software.amazon.awscdk.services.route53.RecordTarget;
+import software.amazon.awscdk.services.route53.targets.CloudFrontTarget;
 import software.amazon.awscdk.services.s3.BlockPublicAccess;
 import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.BucketEncryption;
@@ -39,12 +49,38 @@ public class TheSimpleWebserviceStack extends Stack {
   public TheSimpleWebserviceStack(final Construct scope, final String id, final StackProps props) {
     super(scope, id, props);
 
+    // constants
+    var certificateArn = System.getenv("AWS_CERTIFICATE_ARN");
+    var domainName = System.getenv("AWS_DOMAIN_NAME");
+
     // Create resources
     Bucket s3Bucket = createS3Bucket();
-    Distribution distribution = createCloudfrontDistribution(s3Bucket);
     Table dynamoDbTable = createDynamoDBTable();
     Function lambda = createLambda(dynamoDbTable.getTableName());
-    HttpApi api = createHttpApi(lambda, distribution);
+
+    // 2. Import an existing certificate (in us-east-1)
+    ICertificate certificate = Certificate.fromCertificateArn(this, "SiteCert", certificateArn);
+
+    Distribution distribution = createCloudfrontDistribution(s3Bucket, certificate, domainName);
+    HttpApi api = createHttpApi(lambda, distribution, domainName);
+
+    // 4. Route53 alias record
+    IHostedZone hostedZone = HostedZone.fromLookup(
+        this,
+        "MyHostedZone",
+        HostedZoneProviderProps.builder().domainName(domainName).build());
+
+    ARecord.Builder.create(this, "AliasRecord")
+        .zone(hostedZone)
+        .recordName(domainName)
+        .target(RecordTarget.fromAlias(new CloudFrontTarget(distribution)))
+        .build();
+
+    AaaaRecord.Builder.create(this, "AliasRecordAAAA")
+        .zone(hostedZone)
+        .recordName(domainName)
+        .target(RecordTarget.fromAlias(new CloudFrontTarget(distribution)))
+        .build();
 
     // bucket policy to allow distribution
     createBucketPolicyForDistribution(s3Bucket, distribution);
@@ -92,7 +128,7 @@ public class TheSimpleWebserviceStack extends Stack {
         .build();
   }
 
-  private HttpApi createHttpApi(Function dynamoLambda, Distribution distribution) {
+  private HttpApi createHttpApi(Function dynamoLambda, Distribution distribution, String domainName) {
     return HttpApi.Builder.create(this, "cdk-playground-api")
         .defaultIntegration(
             HttpLambdaIntegration.Builder
@@ -100,7 +136,7 @@ public class TheSimpleWebserviceStack extends Stack {
                 .build())
         .corsPreflight(CorsPreflightOptions.builder()
             .allowMethods(Collections.singletonList(CorsHttpMethod.GET))
-            .allowOrigins(Collections.singletonList("https://" + distribution.getDistributionDomainName()))
+            .allowOrigins(Arrays.asList("https://" + distribution.getDistributionDomainName(), "https://" + domainName))
             .build())
         .build();
   }
@@ -137,7 +173,8 @@ public class TheSimpleWebserviceStack extends Stack {
         .build();
   }
 
-  private Distribution createCloudfrontDistribution(Bucket bucket) {
+  private Distribution createCloudfrontDistribution(Bucket bucket, ICertificate cert,
+      String domainName) {
     BehaviorOptions behaviorOptions = BehaviorOptions.builder()
         .viewerProtocolPolicy(ViewerProtocolPolicy.REDIRECT_TO_HTTPS)
         .origin(S3BucketOrigin.withOriginAccessControl(bucket))
@@ -148,6 +185,8 @@ public class TheSimpleWebserviceStack extends Stack {
         .priceClass(PriceClass.PRICE_CLASS_100)
         .defaultRootObject("index.html")
         .defaultBehavior(behaviorOptions)
+        .domainNames(Collections.singletonList(domainName))
+        .certificate(cert)
         .build();
   }
 }

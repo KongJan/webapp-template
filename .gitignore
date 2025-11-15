@@ -28,6 +28,7 @@ replay_pid*
 
 # AWS CDK
 cdk.out/
+cdk.context.json
 
 # Build folders
 /lambda/target/
