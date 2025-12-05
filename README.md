@@ -1,2 +1,3 @@
 # webapp-template
-Template for Webapplication deployed via AWS CDK. Consisting of Webpage distrubuted via Cloudfront and Webapi routing to Lambda. Based on https://github.com/cdk-patterns/serverless.
+
+Template for a web application deployed via AWS CDK. Consisting of Webpage distributed via Cloudfront and Web Api routing to Lambda. Based on https://github.com/cdk-patterns/serverless.
