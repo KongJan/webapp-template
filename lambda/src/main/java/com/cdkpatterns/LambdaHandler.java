@@ -48,7 +48,7 @@ public class LambdaHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIG
     return APIGatewayV2HTTPResponse.builder()
         .withStatusCode(HttpStatusCode.OK)
         .withBody("You have connected with the Lambda (" + hits + " hits so far)")
-        .withHeaders(Map.of("Content-Type", "text/html"))
+        .withHeaders(Map.of("Content-Type", "text/html", "Request-Id", context.getAwsRequestId()))
         .build();
   }
 
