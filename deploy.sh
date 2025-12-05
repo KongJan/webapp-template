@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Check if tools are installed
 if ! command -v aws &> /dev/null
