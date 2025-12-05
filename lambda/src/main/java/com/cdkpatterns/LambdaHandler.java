@@ -18,12 +18,11 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
-public class LambdaHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
+public record LambdaHandler(DynamoDbClient dynamoDbClient)
+    implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
   private static final Logger LOG = LoggerFactory.getLogger(LambdaHandler.class);
   private static final String HITS_TABLE_NAME = System.getenv("HITS_TABLE_NAME");
-
-  private final DynamoDbClient dynamoDbClient;
 
   public LambdaHandler() {
     this(DynamoDbClient.builder()
@@ -32,10 +31,6 @@ public class LambdaHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIG
         .overrideConfiguration(ClientOverrideConfiguration.builder()
             .build())
         .build());
-  }
-
-  public LambdaHandler(DynamoDbClient dynamoDbClient) {
-    this.dynamoDbClient = dynamoDbClient;
   }
 
   @Override
