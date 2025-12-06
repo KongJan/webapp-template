@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.http.HttpStatusCode;
@@ -35,7 +36,9 @@ public record LambdaHandler(DynamoDbClient dynamoDbClient)
 
   @Override
   public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent event, Context context) {
+    MDC.put("request-id", context.getAwsRequestId());
     LOG.info("Request: {}", event);
+    LOG.info("Context: {}", context);
 
     updateHitsCount(event);
     String hits = readHitsCount(event);
