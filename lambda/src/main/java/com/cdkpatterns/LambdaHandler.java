@@ -38,7 +38,6 @@ public record LambdaHandler(DynamoDbClient dynamoDbClient)
   public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent event, Context context) {
     MDC.put("request-id", context.getAwsRequestId());
     LOG.info("Request: {}", event);
-    LOG.info("Context: {}", context);
 
     updateHitsCount(event);
     String hits = readHitsCount(event);
