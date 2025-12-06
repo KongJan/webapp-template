@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.http.HttpStatusCode;
@@ -18,12 +19,11 @@ import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest;
 
-public class LambdaHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
+public record LambdaHandler(DynamoDbClient dynamoDbClient)
+    implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
   private static final Logger LOG = LoggerFactory.getLogger(LambdaHandler.class);
   private static final String HITS_TABLE_NAME = System.getenv("HITS_TABLE_NAME");
-
-  private final DynamoDbClient dynamoDbClient;
 
   public LambdaHandler() {
     this(DynamoDbClient.builder()
@@ -34,12 +34,9 @@ public class LambdaHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIG
         .build());
   }
 
-  public LambdaHandler(DynamoDbClient dynamoDbClient) {
-    this.dynamoDbClient = dynamoDbClient;
-  }
-
   @Override
   public APIGatewayV2HTTPResponse handleRequest(APIGatewayV2HTTPEvent event, Context context) {
+    MDC.put("request-id", context.getAwsRequestId());
     LOG.info("Request: {}", event);
 
     updateHitsCount(event);
@@ -48,7 +45,7 @@ public class LambdaHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIG
     return APIGatewayV2HTTPResponse.builder()
         .withStatusCode(HttpStatusCode.OK)
         .withBody("You have connected with the Lambda (" + hits + " hits so far)")
-        .withHeaders(Map.of("Content-Type", "text/html"))
+        .withHeaders(Map.of("Content-Type", "text/html", "Request-Id", context.getAwsRequestId()))
         .build();
   }
 

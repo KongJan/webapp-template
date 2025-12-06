@@ -14,14 +14,17 @@
     <artifactId>the-simple-webservice-lambda</artifactId>
 
     <properties>
+
         <maven.assembly.plugin>3.1.1</maven.assembly.plugin>
         <reproducible.build.maven.plugin>0.12</reproducible.build.maven.plugin>
 
-        <aws.log4j.version>2.13.3</aws.log4j.version>
         <aws.sdk.version>2.13.66</aws.sdk.version>
+        <aws.lambda-core.version>1.2.2</aws.lambda-core.version>
         <aws.lambda-events.version>3.1.1</aws.lambda-events.version>
-        <symphonia.logging.version>1.0.3</symphonia.logging.version>
-        <symphonia.packaging.version>1.0.0</symphonia.packaging.version>
+        <aws.lambda-log4j2.version>1.6.0</aws.lambda-log4j2.version>
+
+        <org.slf4j.version>2.0.12</org.slf4j.version>
+        <ch.qos.logback.version>1.5.21</ch.qos.logback.version>
     </properties>
 
 
@@ -29,8 +32,18 @@
         <!-- AWS Lambda Event Types -->
         <dependency>
             <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-core</artifactId>
+            <version>${aws.lambda-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-events</artifactId>
             <version>${aws.lambda-events.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-log4j2</artifactId>
+            <version>${aws.lambda-log4j2.version}</version>
         </dependency>
 
         <!-- DynamoDB SDK: optimized for cold starts-->
@@ -56,10 +69,17 @@
         </dependency>
 
         <!-- Logging -->
+        <!-- SLF4J API (logging facade)-->
         <dependency>
-            <groupId>io.symphonia</groupId>
-            <artifactId>lambda-logging</artifactId>
-            <version>${symphonia.logging.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+        <!-- Logback (logging implementation)-->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${ch.qos.logback.version}</version>
         </dependency>
     </dependencies>
 

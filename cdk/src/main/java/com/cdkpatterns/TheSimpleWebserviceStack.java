@@ -147,7 +147,7 @@ public class TheSimpleWebserviceStack extends Stack {
         .handler("com.cdkpatterns.LambdaHandler::handleRequest")
         .runtime(Runtime.JAVA_21)
         .architecture(Architecture.ARM_64)
-        .memorySize(1024)
+        .memorySize(512)
         .environment(Map.of(
             "HITS_TABLE_NAME", tableName,
             "REGION", this.getRegion()))
